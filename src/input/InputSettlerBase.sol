@@ -15,6 +15,7 @@ import { MandateOutput } from "./types/MandateOutputType.sol";
 
 import { MandateOutputEncodingLib } from "../libs/MandateOutputEncodingLib.sol";
 import { MandateOutput } from "./types/MandateOutputType.sol";
+import { StandardOrder } from "./types/StandardOrderType.sol";
 
 /**
  * @title Base Input Settler
@@ -163,11 +164,13 @@ abstract contract InputSettlerBase is EIP712 {
         MandateOutput[] calldata outputs,
         bytes32 orderId,
         uint32[] calldata timestamps,
-        bytes32[] memory solvers // TODO: calldata
+        bytes32[] memory solvers
     ) internal view {
         uint256 numOutputs = outputs.length;
-        uint256 numTimestamps = timestamps.length;
-        if (numTimestamps != numOutputs) revert InvalidTimestampLength();
+        {
+            uint256 numTimestamps = timestamps.length;
+            if (numTimestamps != numOutputs) revert InvalidTimestampLength();
+        }
 
         bytes memory proofSeries = new bytes(32 * 4 * numOutputs);
         for (uint256 i; i < numOutputs; ++i) {
@@ -189,4 +192,40 @@ abstract contract InputSettlerBase is EIP712 {
         }
         IInputOracle(inputOracle).efficientRequireProven(proofSeries);
     }
+
+    // function _validateFills(
+    //     // uint32 fillDeadline,
+    //     // address inputOracle,
+    //     // MandateOutput[] calldata outputs,
+    //     StandardOrder calldata order,
+    //     bytes32 orderId,
+    //     uint32[] calldata timestamps,
+    //     bytes32[] memory solvers // TODO: calldata
+    // ) internal view {
+    //     uint256 numOutputs = order.outputs.length;
+    //     {
+    //         uint256 numTimestamps = timestamps.length;
+    //         if (numTimestamps != numOutputs) revert InvalidTimestampLength();
+    //     }
+
+    //     bytes memory proofSeries = new bytes(32 * 4 * numOutputs);
+    //     for (uint256 i; i < numOutputs; ++i) {
+    //         uint32 outputFilledAt = timestamps[i];
+    //         if (order.fillDeadline < outputFilledAt) revert FilledTooLate(order.fillDeadline, outputFilledAt);
+    //         MandateOutput calldata output = order.outputs[i];
+    //         bytes32 payloadHash = _proofPayloadHash(orderId, solvers[i], outputFilledAt, output);
+
+    //         uint256 chainId = output.chainId;
+    //         bytes32 outputOracle = output.oracle;
+    //         bytes32 outputSettler = output.settler;
+    //         assembly ("memory-safe") {
+    //             let offset := add(add(proofSeries, 0x20), mul(i, 0x80))
+    //             mstore(offset, chainId)
+    //             mstore(add(offset, 0x20), outputOracle)
+    //             mstore(add(offset, 0x40), outputSettler)
+    //             mstore(add(offset, 0x60), payloadHash)
+    //         }
+    //     }
+    //     IInputOracle(order.inputOracle).efficientRequireProven(proofSeries);
+    // }
 }

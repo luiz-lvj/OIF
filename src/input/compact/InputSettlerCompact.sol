@@ -104,7 +104,7 @@ contract InputSettlerCompact is InputSettlerPurchase, IInputSettlerCompact {
         StandardOrder calldata order,
         bytes calldata signatures,
         uint32[] calldata timestamps,
-        bytes32[] memory solvers,
+        bytes32[] calldata solvers,
         bytes32 destination,
         bytes calldata call
     ) external virtual {
@@ -139,22 +139,23 @@ contract InputSettlerCompact is InputSettlerPurchase, IInputSettlerCompact {
         StandardOrder calldata order,
         bytes calldata signatures,
         uint32[] calldata timestamps,
-        bytes32[] memory solvers,
+        bytes32[] calldata solvers,
         bytes32 destination,
         bytes calldata call,
         bytes calldata orderOwnerSignature
     ) external virtual {
         _validateDestination(destination);
         _validateInputChain(order.originChainId);
-
         bytes32 orderId = _orderIdentifier(order);
-        bytes32 orderOwner = _purchaseGetOrderOwner(orderId, solvers[0], timestamps);
+        {
+            bytes32 orderOwner = _purchaseGetOrderOwner(orderId, solvers[0], timestamps);
 
-        // Validate the external claimant with signature
-        _allowExternalClaimant(orderId, orderOwner.fromIdentifier(), destination, call, orderOwnerSignature);
+            // Validate the external claimant with signature
+            _allowExternalClaimant(orderId, orderOwner.fromIdentifier(), destination, call, orderOwnerSignature);
+        }
 
         _validateFills(order.fillDeadline, order.inputOracle, order.outputs, orderId, timestamps, solvers);
-
+        //_validateFills(order, orderId, timestamps, solvers);
         _finalise(order, signatures, orderId, solvers[0], destination);
 
         if (call.length > 0) IInputCallback(destination.fromIdentifier()).orderFinalised(order.inputs, call);
