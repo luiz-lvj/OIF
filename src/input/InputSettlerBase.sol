@@ -164,7 +164,7 @@ abstract contract InputSettlerBase is EIP712 {
         MandateOutput[] calldata outputs,
         bytes32 orderId,
         uint32[] calldata timestamps,
-        bytes32[] memory solvers
+        bytes32[] calldata solvers
     ) internal view {
         uint256 numOutputs = outputs.length;
         {
