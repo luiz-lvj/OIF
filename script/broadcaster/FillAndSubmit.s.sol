@@ -25,15 +25,15 @@ contract DeployOutputOracle is Script {
         // sepolia
 
         vm.startBroadcast(vm.envUint("PRIVATE_KEY"));
-        broadcasterOracle = BroadcasterOracle(0x8Dc3812f911383e6320D036e35Db8dF3774C4eE1);
+        broadcasterOracle = BroadcasterOracle(0x11e14F08Bd326521A3C1f59eE4Be0EB64C04908D);
 
-        outputSettler = OutputSettlerSimple(0xBBaf87dA3F1c1B3c119E389590108830a1e89829);
-        token = MockERC20(0x871ea89101BbE55C8c3dDbAA0890C128E828A339);
+        outputSettler = OutputSettlerSimple(0x674Cd8B4Bec9b6e9767FAa8d897Fd6De0729dd66);
+        token = MockERC20(0x287E1E51Dad0736Dc5de7dEaC0751C21b3d88d6e);
 
         console.log("token deployed to:", address(token));
         console.log("output settler deployed to:", address(outputSettler));
 
-        uint256 amount = 0.01 ether;
+        uint256 amount = 1 ether;
 
         address filler = 0x9a56fFd72F4B526c523C733F1F74197A51c495E1;
 
@@ -63,7 +63,7 @@ contract DeployOutputOracle is Script {
         bytes memory payload = MandateOutputEncodingLib.encodeFillDescriptionMemory(
             filler.toIdentifier(),
             orderId,
-            uint32(1761575375),
+            uint32(1764086688),
             output.token,
             output.amount,
             output.recipient,
