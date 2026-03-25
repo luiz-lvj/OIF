@@ -3,8 +3,8 @@ pragma solidity ^0.8.22;
 
 import { Script, console } from "forge-std/Script.sol";
 
-import { OutputSettlerSimple } from "../../src/output/simple/OutputSettlerSimple.sol";
 import { HyperlaneOracle } from "../../src/integrations/oracles/hyperlane/HyperlaneOracle.sol";
+import { OutputSettlerSimple } from "../../src/output/simple/OutputSettlerSimple.sol";
 import { MockERC20 } from "../../test/mocks/MockERC20.sol";
 
 import { MandateOutput } from "../../src/input/types/MandateOutputType.sol";
@@ -19,15 +19,14 @@ contract DeployOutputOracle is Script {
     MandateOutput public output;
     MockERC20 public token;
 
-    function setUp() public {}
+    function setUp() public { }
 
     function run() external {
-
         hyperlaneOutputOracle = HyperlaneOracle(0x378220D6De1301c9FbCe19f1860459CE84D4bBe7);
         outputSettler = OutputSettlerSimple(0x3770f7095aEA35E488724EB02eBB88d9004f3958);
         token = MockERC20(0x713468f906cc643c3484767559baA417214827B8);
 
-        uint256 outputChainId = 84532; // Base Sepolia 
+        uint256 outputChainId = 84532; // Base Sepolia
         uint256 amount = 0.01 ether;
 
         address hyperlaneInputOracle = 0xc8604e4aBC757C5C1990BAe679A7b219808EDc9c;
@@ -76,21 +75,11 @@ contract DeployOutputOracle is Script {
         uint256 gasLimit = 1000000;
 
         uint256 gasPayment = hyperlaneOutputOracle.quoteGasPayment(
-            inputChainId,
-            hyperlaneInputOracle,
-            gasLimit,
-            bytes(""),
-            address(outputSettler),
-            payloads
+            inputChainId, hyperlaneInputOracle, gasLimit, bytes(""), address(outputSettler), payloads
         );
 
         hyperlaneOutputOracle.submit{ value: gasPayment }(
-            inputChainId,
-            hyperlaneInputOracle,
-            gasLimit,
-            bytes(""),
-            address(outputSettler),
-            payloads
+            inputChainId, hyperlaneInputOracle, gasLimit, bytes(""), address(outputSettler), payloads
         );
 
         vm.stopBroadcast();

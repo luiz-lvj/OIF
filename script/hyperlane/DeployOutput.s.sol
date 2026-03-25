@@ -3,16 +3,15 @@ pragma solidity ^0.8.22;
 
 import { Script, console } from "forge-std/Script.sol";
 
-import { OutputSettlerSimple } from "../../src/output/simple/OutputSettlerSimple.sol";
 import { HyperlaneOracle } from "../../src/integrations/oracles/hyperlane/HyperlaneOracle.sol";
+import { OutputSettlerSimple } from "../../src/output/simple/OutputSettlerSimple.sol";
 import { MockERC20 } from "../../test/mocks/MockERC20.sol";
 
 contract DeployOutputOracle is Script {
-
     OutputSettlerSimple public outputSettler;
     HyperlaneOracle public hyperlaneOracle;
 
-    function setUp() public {}
+    function setUp() public { }
 
     function run() external {
         vm.startBroadcast(vm.envUint("PRIVATE_KEY"));
@@ -25,14 +24,10 @@ contract DeployOutputOracle is Script {
 
         hyperlaneOracle = new HyperlaneOracle(mailbox, customHook, ism);
         MockERC20 token = new MockERC20("TEST", "TEST", 18);
-        
+
         console.log("OutputSettler:", address(outputSettler));
         console.log("HyperlaneOracle Output:", address(hyperlaneOracle));
         console.log("MockERC20:", address(token));
-
-
-
-
 
         vm.stopBroadcast();
     }
