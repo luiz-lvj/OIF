@@ -325,16 +325,16 @@ contract InputSettlerEscrow is InputSettlerPurchase, IInputSettlerEscrow {
         for (uint256 i; i < numInputs; ++i) {
             uint256[2] calldata input = inputs[i];
             bytes calldata signature = BytesLib.getBytesOfArray(_signature_, i);
-            IERC3009(input[0].validatedCleanAddress())
-                .receiveWithAuthorization({
-                    from: signer,
-                    to: address(this),
-                    value: input[1],
-                    validAfter: 0,
-                    validBefore: fillDeadline,
-                    nonce: orderId,
-                    signature: signature
-                });
+            // forgefmt: disable-next-line
+            IERC3009(input[0].validatedCleanAddress()).receiveWithAuthorization({
+                from: signer,
+                to: address(this),
+                value: input[1],
+                validAfter: 0,
+                validBefore: fillDeadline,
+                nonce: orderId,
+                signature: signature
+            });
         }
     }
 
@@ -498,6 +498,7 @@ contract InputSettlerEscrow is InputSettlerPurchase, IInputSettlerEscrow {
         bytes calldata solverSignature
     ) external virtual {
         _validateInputChain(order.originChainId);
+        _validateTimestampHasNotPassed(order.expires);
         bytes32 computedOrderId = order.orderIdentifier();
         // Sanity check to ensure the user thinks they are buying the right order.
         if (computedOrderId != orderPurchase.orderId) revert OrderIdMismatch(orderPurchase.orderId, computedOrderId);
